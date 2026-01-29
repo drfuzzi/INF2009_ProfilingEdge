@@ -88,7 +88,7 @@ pip install psutil numpy matplotlib
 
 ***
 
-# ⭐ 4.1 If You DO NOT Have Code From Previous Labs (Important)
+# 4.1 If You DO NOT Have Code From Previous Labs (Important)
 
 If you did not complete earlier labs (Image, Audio, DL, MQTT), download the **Sample Script Pack**:
 
@@ -115,7 +115,7 @@ They are **small standalone tasks** representing previous labs.
 
 ***
 
-# ⭐ 4.2 Required Python Libraries for Sample Scripts
+# 4.2 Required Python Libraries for Sample Scripts
 
 Inside your profiling environment:
 
@@ -141,7 +141,7 @@ If PyTorch cannot be installed on your Pi, skip the DL task.
 
 ***
 
-# ⭐ 4.3 Running the Sample Scripts
+# 4.3 Running the Sample Scripts
 
 Move into:
 
