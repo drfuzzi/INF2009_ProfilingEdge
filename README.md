@@ -1,13 +1,4 @@
-Below is a **clean, self‑contained README‑ready guided lab** for **RPi 5 (64‑bit OS)**, written in the same tone/structure as your existing INF2009 labs (Image/Video, Sound, DL‑on‑Edge, MQTT).
-
-Your enterprise search didn’t return relevant teaching templates for the INF2009 labs (only module profile spreadsheets such as [ModuleProfileReport\_Prod\_14May2025\_v2.0\_Muhamed Fauzi Bin Ab 1.xlsx](https://sitsingaporetechedu-my.sharepoint.com/personal/a101434_singaporetech_edu_sg/_layouts/15/Doc.aspx?sourcedoc=%7B7B91D047-62BC-4BAB-ADE6-11305EF13EEA%7D\&file=ModuleProfileReport_Prod_14May2025_v2.0_Muhamed%20Fauzi%20Bin%20Ab%201.xlsx\&action=default\&mobileredirect=true\&DefaultItemOpen=1\&EntityRepresentationId=bf201059-a031-4f85-a05b-b8a5cb0f66f7) and [ModuleProfileReport\_Prod\_14May2025\_v3.0.xlsx](https://sitsingaporetechedu-my.sharepoint.com/personal/a101434_singaporetech_edu_sg/_layouts/15/Doc.aspx?sourcedoc=%7B2A1DED6E-94CC-4286-B5C5-E96BBEB4D6FD%7D\&file=ModuleProfileReport_Prod_14May2025_v3.0.xlsx\&action=default\&mobileredirect=true\&DefaultItemOpen=1\&EntityRepresentationId=db9a4de9-de9a-49fd-999d-2387031f3810) which describe module metadata, not lab formats)  —so I’ve mirrored the structure directly from your GitHub‑based lab style (sections, objectives, environment setup, step‑by‑step exercises, deliverables). [\[ModuleProf...i Bin Ab 1 | Excel\]](https://sitsingaporetechedu-my.sharepoint.com/personal/a101434_singaporetech_edu_sg/_layouts/15/Doc.aspx?sourcedoc=%7B7B91D047-62BC-4BAB-ADE6-11305EF13EEA%7D&file=ModuleProfileReport_Prod_14May2025_v2.0_Muhamed%20Fauzi%20Bin%20Ab%201.xlsx&action=default&mobileredirect=true&DefaultItemOpen=1), [\[ModuleProf...y2025_v3.0 | Excel\]](https://sitsingaporetechedu-my.sharepoint.com/personal/a101434_singaporetech_edu_sg/_layouts/15/Doc.aspx?sourcedoc=%7B7B4A4F1A-7B15-41F9-90E8-215CB7ECC2A2%7D&file=ModuleProfileReport_Prod_14May2025_v3.0.xlsx&action=default&mobileredirect=true&DefaultItemOpen=1)
-
-***
-
 # INF2009 – **Profiling for Edge Computing**
-
-**Raspberry Pi 5 • 64‑bit OS**  
-**Do not skip sections. Follow steps exactly.**
 
 ***
 
