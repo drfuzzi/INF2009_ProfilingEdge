@@ -189,7 +189,7 @@ python sample_mqtt_pub.py
 
 ***
 
-# 5. Conceptual Background (Read Carefully)
+# 5. Conceptual Background
 
 ### 5.1 Wall‑clock vs CPU Time
 
