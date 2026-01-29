@@ -1,7 +1,5 @@
 # INF2009 – **Profiling for Edge Computing**
 
-***
-
 ## 1. Overview
 
 In the previous labs, you learned how to perform:
