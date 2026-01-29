@@ -359,16 +359,7 @@ Submit:
 
 ***
 
-# 11. Marking Criteria (100%)
-
-*   **Correct use of profiling tools**
-*   **Depth of analysis (p95/p99, jitter, interference)**
-*   **Scheduling plan correctness & justification**
-*   **Clarity & reproducibility**
-
-***
-
-# 12. Quick Command Cheatsheet
+# 11. Quick Command Cheatsheet
 
 ```bash
 /usr/bin/time -v python app.py
