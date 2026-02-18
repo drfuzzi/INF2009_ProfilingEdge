@@ -94,13 +94,11 @@ If you did not complete earlier labs (Image, Audio, DL, MQTT), download the **Sa
 
 ```bash
 cd ~/inf2009
-wget <YOUR-GITHUB-LINK-HERE> -O sample_scripts.zip
-unzip sample_scripts.zip -d sample_scripts
 ```
 
 You should now have:
 
-    ~/inf2009/sample_scripts/
+    ~/inf2009/profiling_package/
         sample_img.py
         sample_audio.py
         sample_dl.py
@@ -146,7 +144,7 @@ If PyTorch cannot be installed on your Pi, skip the DL task.
 Move into:
 
 ```bash
-cd ~/inf2009/sample_scripts
+cd ~/inf2009/profiling_package
 ```
 
 ### Image / Video
