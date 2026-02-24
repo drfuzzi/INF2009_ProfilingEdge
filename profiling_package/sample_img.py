@@ -1,52 +1,72 @@
+import cv2
 import numpy as np
-from PIL import Image
+import matplotlib.pyplot as plt
+from skimage.feature import hog
+from skimage import exposure
 
-def preprocess_image(image_path, target_size=(224, 224)):
+def process_for_edge_profiling(image_path, downscale_factor=2):
     """
-    Loads and resizes an image to the target dimensions for model profiling.
+    Simulates the Image Analytics lab workflow:
+    1. Loads a real image via OpenCV.
+    2. Converts to Grayscale (as required by HoG).
+    3. Downscales (Crucial for Edge performance).
+    4. Extracts HoG features for a 'feature-based' profiling test.
     """
-    img = Image.open(image_path).convert('RGB')
-    img = img.resize(target_size)
-    
-    # Convert to NumPy array
-    img_array = np.array(img, dtype=np.float32)
-    
-    # Normalize to [0, 1] or [-1, 1] depending on model requirements
-    img_array = img_array / 255.0
-    
-    # Add batch dimension: (1, height, width, channels)
-    img_array = np.expand_dims(img_array, axis=0)
-    
-    return img_array
+    # Load image
+    img = cv2.imread(image_path)
+    if img is None:
+        raise FileNotFoundError(f"Could not load {image_path}")
 
-def save_to_header(img_array, filename="image_data.h"):
-    """
-    Converts the image array to a C header file for embedded C/C++ projects 
-    (e.g., for ESP32 or FPGA firmware).
-    """
-    # Flatten the array for C-style indexing
-    flat_data = img_array.flatten()
+    # 1. Grayscale Conversion (Standard for analytics)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # 2. Downscaling (The 'Informed Decision' from Lab 5)
+    # Reduces compute load for Edge devices like ESP32/Raspberry Pi
+    new_size = (gray.shape[1] // downscale_factor, gray.shape[0] // downscale_factor)
+    resized = cv2.resize(gray, new_size, interpolation=cv2.INTER_AREA)
+
+    # 3. HoG Feature Extraction (From Analytics Lab 5)
+    # This represents the actual 'workload' we want to profile
+    features, hog_image = hog(resized, orientations=8, pixels_per_cell=(16, 16),
+                               cells_per_block=(1, 1), visualize=True)
     
+    # Rescale HoG image for visualization/saving
+    hog_image_rescaled = exposure.rescale_intensity(hog_image, in_range=(0, 10))
+
+    return resized, features, hog_image_rescaled
+
+def export_to_header(data, var_name, filename="edge_data.h"):
+    """
+    Exports the processed analytics data into a C header for the Profiling Lab.
+    """
+    flat_data = data.flatten()
     with open(filename, "w") as f:
-        f.write("#ifndef IMAGE_DATA_H\n#define IMAGE_DATA_H\n\n")
-        f.write(f"const float image_data[{len(flat_data)}] = {{\n")
-        f.write(", ".join(map(str, flat_data)))
-        f.write("\n};\n\n#endif")
-    print(f"Header file saved as {filename}")
+        f.write(f"#ifndef {var_name.upper()}_H\n#define {var_name.upper()}_H\n\n")
+        f.write(f"const float {var_name}[{len(flat_data)}] = {{\n")
+        
+        # Write 8 values per line for readability
+        for i in range(0, len(flat_data), 8):
+            f.write("    " + ", ".join([f"{x:.4f}f" for x in flat_data[i:i+8]]) + ",\n")
+            
+        f.write("};\n\n#endif")
+    print(f"✅ Exported {var_name} to {filename}")
 
 if __name__ == "__main__":
-    # Example usage
-    INPUT_IMAGE = "test_image.jpg" # Ensure this exists in your repo
+    INPUT_FILE = "test_image.jpg" # Student's image from previous lab
     
     try:
-        processed_data = preprocess_image(INPUT_IMAGE)
-        print(f"Processed image shape: {processed_data.shape}")
+        # Process the image using analytics techniques
+        img_data, feature_data, viz = process_for_edge_profiling(INPUT_FILE)
         
-        # Save as .npy for Python profiling (e.g., on Raspberry Pi/Beelink)
-        np.save("sample_input.npy", processed_data)
-        
-        # Save as .h for Edge device deployment (e.g., ESP32-S3)
-        save_to_header(processed_data)
-        
-    except FileNotFoundError:
-        print(f"Error: {INPUT_IMAGE} not found. Please provide a valid image file.")
+        print(f"Original Image -> Processed Shape: {img_data.shape}")
+        print(f"Extracted {len(feature_data)} HoG features for profiling.")
+
+        # Export for Edge Profiling
+        # We export the processed image AND the features to see which is 
+        # faster to process on the hardware
+        export_to_header(img_data, "input_image_gray", "image_input.h")
+        export_to_header(feature_data, "hog_features", "features_input.h")
+
+    except Exception as e:
+        print(f"Error: {e}")
+        print("Tip: Ensure 'test_image.jpg' from the Analytics lab is in this folder.")
