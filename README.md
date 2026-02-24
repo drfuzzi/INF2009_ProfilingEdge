@@ -340,15 +340,54 @@ export NUMEXPR_NUM_THREADS=1
 
 # 8. Part C — End‑to‑End Latency with MQTT
 
-Use sample scripts or your own.
+## MQTT Environment Setup
 
-### Subscriber with timestamps
+To measure **End-to-End (E2E) latency**, you need a data flow. Before running your subscriber, ensure your local broker is active.
+
+**1. Check the Broker (on Raspberry Pi):**
+Ensure the Mosquitto service is running on your Pi:
+
+```bash
+sudo systemctl status mosquitto
+
+```
+
+**2. Start the Subscriber (on Raspberry Pi):**
+Open a terminal on your Pi to log incoming processed results with nanosecond precision:
 
 ```bash
 mosquitto_sub -t "lab/e2e/processed" -v | ts '%s%N' >> mqtt_log.txt
+
 ```
 
-***
+**3. Simulate the Data Source (on your PC/Laptop):**
+Open a terminal on your **PC** (ensure it is on the same Wi-Fi/Network as the Pi) and send a test message to trigger the log. Replace `[PI_IP_ADDRESS]` with your Pi's actual IP:
+
+```bash
+# Sending a dummy 'processed' result to the Pi's broker
+mosquitto_pub -h [PI_IP_ADDRESS] -t "lab/e2e/processed" -m "inference_complete"
+
+```
+
+> **Profiling Tip:** > In a real scenario, the Pi would be the one publishing to this topic after finishing an image or audio task. By manually publishing from your PC, you can verify that your `ts` (timestamp) logging is working correctly before you begin the high-load profiling.
+
+---
+
+### **Updated Section 11: Quick Command Cheatsheet**
+
+Add these to the bottom of your cheatsheet for quick access:
+
+```bash
+# Broker & Communication
+sudo systemctl restart mosquitto                      # Restart Broker
+mosquitto_pub -h localhost -t "lab/test" -m "hello"    # Local Test Pub
+hostname -I                                           # Get Pi IP Address
+
+# Memory Monitoring (Add to your toolkit)
+ps -o rss,command -p $(pgrep -f sample_dl.py)         # Snapshot of RAM (RSS)
+pidstat -r -p $(pgrep -f sample_dl.py) 1              # Live Memory Stream
+
+```
 
 # 9. Part D — Scheduling Plan
 
