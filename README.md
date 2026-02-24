@@ -231,7 +231,7 @@ Useful fields:
 
 ### 6.2 `cProfile`
 
-cProfile gives function-level CPU breakdown. It does not show memory; it shows where time is spent.
+cProfile gives function-level CPU breakdown. It runs a deterministic software profiler that counts every single function call and its precise execution time, giving you a detailed breakdown of the internal Python logic. Unlike hardware-based tools, it allows you to save these metrics to a file and interactively sort them to find exactly which line of code, rather than just which hardware resource that cause the delay.
 
 ```bash
 python -m cProfile sample_img.py
@@ -242,7 +242,7 @@ Saving profile to file (recommended)
 python -m cProfile -o output.prof sample_img.py
 ```
 
-Then inspect interactively:
+Then inspect interactively. Try to explore the various stats that are useful for analysis:
 ```bash
 python -m pstats output.prof
 ```
@@ -250,6 +250,8 @@ python -m pstats output.prof
 ***
 
 ### 6.3 `perf stat`
+
+This command executes your script while collecting high-level hardware performance counters to provide a quantitative summary of how the CPU handled the workload. By measuring metrics like cache-misses, instructions per cycle (IPC), and context switches (cs), it allows you to determine if your audio processing is limited by raw calculation speed or memory access inefficiencies.
 
 ```bash
 perf stat -e cycles,instructions,cache-misses,cs,migrations -- python sample_audio.py
@@ -264,6 +266,8 @@ This reveals:
 ***
 
 ### 6.4 `perf record`
+
+This command records exactly which functions are consuming your CPU resources by sampling the script's execution 99 times per second and tracking the sequence of function calls. After the script finishes, the report provides an interactive breakdown that reveals whether your performance bottlenecks lie in image processing, mathematical computations, or library overhead.
 
 ```bash
 perf record -F 99 -g -- python sample_img.py
