@@ -62,7 +62,7 @@ Install required system-level packages:
 sudo apt update
 sudo apt install -y linux-perf time sysstat numactl util-linux \
                     linux-cpupower stress-ng python3-psutil \
-                    mosquitto mosquitto-clients moreutils
+                    mosquitto mosquitto-clients moreutils libcamera-apps
 ```
 
 ***
@@ -102,9 +102,6 @@ You should now have:
         sample_img.py
         sample_audio.py
         sample_dl.py
-        sample_mqtt_pub.py
-        sample_mqtt_proc.py
-        sample_mqtt_sub.py
 
 These scripts are **NOT profiling scripts**.  
 They are **small standalone tasks** representing previous labs.  
@@ -149,6 +146,7 @@ cd ~/inf2009/INF2009_ProfilingEdge/profiling_package/
 ### Image / Video
 
 ```bash
+
 python sample_img.py
 ```
 
@@ -162,26 +160,6 @@ python sample_audio.py
 
 ```bash
 python sample_dl.py
-```
-
-### MQTT
-
-Terminal 1:
-
-```bash
-python sample_mqtt_proc.py
-```
-
-Terminal 2:
-
-```bash
-python sample_mqtt_sub.py
-```
-
-Terminal 3:
-
-```bash
-python sample_mqtt_pub.py
 ```
 
 ***
