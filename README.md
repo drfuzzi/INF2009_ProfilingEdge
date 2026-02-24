@@ -297,6 +297,22 @@ Monitors:
 
 ***
 
+### 6.6 `ps`
+
+While tools like time give you the peak memory used, these commands allow you to monitor memory and CPU usage live while the script is running. This is essential for detecting memory leaks or sudden spikes during heavy inference.
+
+```bash
+ps -o rss,command -p $(pgrep -f sample_dl.py)
+```
+
+Observation:
+What to look for: > * RSS (Resident Set Size): The actual physical RAM your script is holding:
+* %MEM: The percentage of the RPi5’s 8GB RAM being consumed.
+* Optimization Goal: A quantized model should ideally show a significantly lower RSS than the FP32 version.
+
+***
+
+
 # 7. Part B — Single Core vs Multi‑Core
 
 ### 7.1 Pin to Single Core 0
