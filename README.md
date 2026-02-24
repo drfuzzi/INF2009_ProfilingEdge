@@ -363,16 +363,50 @@ taskset -c 2 python sample_audio.py
 
 # 10. Deliverables
 
-Submit:
+Submit a concise summary showing your ability to measure and control edge performance. Use the following guides to extract the required data.
 
-1 Bottleneck Insight: Identify the top 3 functions in sample_img.py (via cProfile) and report the Instructions Per Cycle (IPC) from perf stat.
-2 Tail Latency: A table comparing Average vs. p99 latency to show how often your pipeline misses real-time deadlines.
-3 Optimization Impact: A comparison of FPS and RAM usage (RSS) between the standard (FP32) and quantized (Int8) versions of sample_dl.py.
-4 System Control:
-* The output of chrt -p proving your script ran with Real-Time Priority.
-* The recorded End-to-End latency increase when the 40ms network delay was active.
+### 10.1 Bottleneck Insight
 
-***
+Identify why your code is slow and how efficiently it uses the CPU.
+
+* **Top 3 Functions**: Run `python -m cProfile -s tottime sample_img.py`. Look at the `tottime` (total time) column to find the functions consuming the most resources.
+* **IPC (Instructions Per Cycle)**: Run `perf stat python sample_img.py`.
+* **Guide:** Look for the "insn per cycle" metric.
+* *Note: A value < 1.0 often suggests the CPU is stalled waiting for memory (I/O bound), while > 1.5 suggests efficient computation.*
+
+### 10.2 Tail Latency
+
+Analyze if your pipeline is "jittery" or stable.
+
+* **The Table**: Compare **Average** vs. **p99** latency.
+* **Guide**: In your script, save frame times to a list and use:
+```python
+import numpy as np
+print(f"Average: {np.mean(latencies)}")
+print(f"p99: {np.percentile(latencies, 99)}")
+
+```
+
+### 10.3 Optimization Impact (DL)
+
+Measure the tangible benefit of Quantization on the RPi5.
+
+* **Metrics**: Compare **FPS** and **RAM (RSS)** for `sample_dl.py` (Standard vs. Quantized).
+* **Guide**:
+* Get **FPS** from the script’s terminal output.
+* Get **RAM** by running `pidstat -r 1` or `ps -o rss -p $(pgrep -f sample_dl.py)` while the script is active.
+
+### 10.4 System Control Verification
+
+Prove you can take control of the OS scheduler and network.
+
+* **(1) Real-Time Priority**: Run `chrt -p [PID]` while your script is running under `sudo chrt --rr 50`.
+* **Guide**: Ensure the output confirms `policy: SCHED_RR` and `priority: 50`.
+
+* **(2) Network Stress**: Record the **End-to-End latency** before and after applying `tc qdisc`.
+* **Guide**: Subtract the "sensor" timestamp from the "processed" timestamp in your `mqtt_log.txt`. You should see an increase of roughly 40ms.
+
+---
 
 # 11. Quick Command Cheatsheet
 
