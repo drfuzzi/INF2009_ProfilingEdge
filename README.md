@@ -92,18 +92,18 @@ If you did not complete earlier labs (Image, Audio, DL, MQTT), download the **Sa
 
 ```bash
 cd ~/inf2009
+git clone https://github.com/drfuzzi/INF2009_ProfilingEdge.git
 ```
 
 You should now have:
 
-    ~/inf2009/profiling_package/
+    ~/inf2009/INF2009_ProfilingEdge/profiling_package/
         sample_img.py
         sample_audio.py
         sample_dl.py
         sample_mqtt_pub.py
         sample_mqtt_proc.py
         sample_mqtt_sub.py
-        README.md   (sample pack README)
 
 These scripts are **NOT profiling scripts**.  
 They are **small standalone tasks** representing previous labs.  
