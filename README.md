@@ -33,16 +33,14 @@ By the end of this lab, you will be able to:
 
 2.  Compare **single‑core** vs **multi‑core** execution.
 
-3.  Create a **Profiling Card** for each pipeline (Image, Audio, DL, MQTT).
-
-4.  Use OS‑level controls:
+3.  Use OS‑level controls:
     *   `taskset` (CPU affinity)
     *   `chrt` (priority)
     *   cgroups (CPU quotas)
 
-5.  Implement a **simple EDF scheduler** (Earliest Deadline First).
+4.  Implement a **simple EDF scheduler** (Earliest Deadline First).
 
-6.  Build a scheduling plan that meets task deadlines.
+5.  Build a scheduling plan that meets task deadlines.
 
 ***
 
