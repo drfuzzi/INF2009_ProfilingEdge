@@ -82,6 +82,7 @@ Install general Python libraries:
 
 ```bash
 pip install psutil numpy matplotlib
+pip install scikit-image opencv-python matplotlib
 ```
 
 ***
