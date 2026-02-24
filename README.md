@@ -222,12 +222,34 @@ You will apply profiling **manually** using these tools.
 
 Useful fields:
 
-*   Max RSS (memory)
-*   User vs Sys CPU time
+*   CPU vs wall time sanity check
+*   Memory footprint
+*   Scheduling / contention indicators
+*   I/O indicators
 
 ***
 
-### 6.2 `perf stat`
+### 6.2 `cProfile`
+
+cProfile gives function-level CPU breakdown. It does not show memory; it shows where time is spent.
+
+```bash
+python -m cProfile sample_img.py
+```
+
+Saving profile to file (recommended)
+```bash
+python -m cProfile -o output.prof sample_img.py
+```
+
+Then inspect interactively:
+```bash
+python -m pstats output.prof
+```
+
+***
+
+### 6.3 `perf stat`
 
 ```bash
 perf stat -e cycles,instructions,cache-misses,cs,migrations -- python sample_audio.py
@@ -241,7 +263,7 @@ This reveals:
 
 ***
 
-### 6.3 `perf record`
+### 6.4 `perf record`
 
 ```bash
 perf record -F 99 -g -- python sample_img.py
@@ -252,7 +274,7 @@ Shows where CPU time is spent (functions, call stacks).
 
 ***
 
-### 6.4 `pidstat`
+### 6.5 `pidstat`
 
 ```bash
 pidstat -rud -p $(pgrep -f sample_img.py) 1
