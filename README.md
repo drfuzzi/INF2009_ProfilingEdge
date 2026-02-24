@@ -216,6 +216,8 @@ You will apply profiling **manually** using these tools.
 
 ### 6.1 `/usr/bin/time`
 
+This command executes your script while the kernel tracks and reports a detailed summary of resource consumption, focusing heavily on memory usage and system-level interactions. By using the verbose (-v) flag, it reveals critical edge computing metrics like Maximum Resident Set Size (the peak RAM used) and the number of page faults, which helps you understand the physical hardware footprint of your image analytics code.
+
 ```bash
 /usr/bin/time -v python sample_img.py
 ```
