@@ -47,9 +47,8 @@ By the end of this lab, you will be able to:
 ### Hardware
 
 *   Raspberry Pi **5** (8GB recommended)
-*   Raspberry Pi OS **64‑bit**
-*   USB webcam or Pi Camera Module 3
-*   USB microphone
+*   Debian 13 on Raspberry Pi 5 **64‑bit** (use RPi Imager)
+*   USB webcam 
 *   Internet connection
 
 ### System Tools
@@ -60,7 +59,7 @@ Install required system-level packages:
 sudo apt update
 sudo apt install -y linux-perf time sysstat numactl util-linux \
                     linux-cpupower stress-ng python3-psutil \
-                    mosquitto mosquitto-clients moreutils libcamera-apps alsa-utils
+                    mosquitto mosquitto-clients moreutils libcamera-tools alsa-utils
 ```
 
 ***
@@ -79,8 +78,7 @@ source profiling_env/bin/activate
 Install general Python libraries:
 
 ```bash
-pip install psutil numpy matplotlib
-pip install scikit-image opencv-python matplotlib
+pip install psutil numpy matplotlib scikit-image opencv-python
 ```
 
 ***
@@ -285,7 +283,7 @@ Shows where CPU time is spent (functions, call stacks).
 This command monitors the real-time resource usage—including CPU, memory, and disk I/O—of your specific script by locating its Process ID (PID) and refreshing the statistics every second. It is particularly useful for observing the dynamic behavior of your code, such as whether memory usage creeps up during image processing or if disk access spikes when exporting header files.
 
 ```bash
-pidstat -rud -p $(pgrep -f sample_img.py) 1
+pidstat -rudw -p $(pgrep -f sample_img.py) 1
 ```
 
 Monitors:
