@@ -123,15 +123,13 @@ pip install matplotlib
 pip install psutil
 ```
 
-### Optional — Deep Learning Sample
+### Deep Learning Sample
 
-(If you want to run `sample_dl.py`)
+Needed to run `sample_dl.py`
 
 ```bash
 pip install torch torchvision --extra-index-url https://download.pytorch.org/whl/cpu
 ```
-
-If PyTorch cannot be installed on your Pi, skip the DL task.
 
 ***
 
@@ -153,6 +151,7 @@ python sample_img.py
 ### Audio
 
 ```bash
+arecord -D hw:2,0 -d 5 -r 16000 -f S16_LE -c 2 test.wav
 python sample_audio.py
 ```
 
@@ -168,25 +167,50 @@ python sample_dl.py
 
 ### 5.1 Wall‑clock vs CPU Time
 
+You can capture both metrics directly within your Python scripts (like sample_img.py or sample_audio.py) using the time library.
+
 *   **Wall‑clock time**: includes waiting, I/O delays, scheduling delays.
 *   **CPU time**: actual time CPU spent running your code.
 
+```python
+import time
+import os
+
+# Start counters
+wall_start = time.perf_counter()    # Wall-clock (includes sleep/IO)
+cpu_start = time.process_time()     # CPU-time (only active execution)
+
+# --- Your Processing Code Here ---
+# e.g., model(input_tensor)
+
+# End counters
+wall_end = time.perf_counter()
+cpu_end = time.process_time()
+
+print(f"Wall-clock Time: {wall_end - wall_start:.4f}s")
+print(f"Total CPU Time:  {cpu_end - cpu_start:.4f}s")
+```
+
 ### 5.2 Why Percentiles Matter (p95, p99)
 
-Your pipeline may average 10 ms but occasionally take 80 ms.  
-Deadlines are violated by **tail latency** — not averages.
+To find tail latency, store the timing of each frame in a list and use numpy to calculate percentiles. This is more critical for edge devices than a simple average because a single "laggy" frame can break a real-time system. Your pipeline may average 10 ms but occasionally take 80 ms. Deadlines are violated by **tail latency** — not averages.
 
-### 5.3 RPi5 Cores
+```python
+import numpy as np
 
-RPi5 includes **4 Cortex‑A76 high‑performance cores**.
+latencies = []
+for i in range(100):
+    start = time.perf_counter()
+    # Run inference...
+    latencies.append(time.perf_counter() - start)
 
-Use:
+# Calculate stats
+p95 = np.percentile(latencies, 95)
+p99 = np.percentile(latencies, 99)
+avg = np.mean(latencies)
 
-*   **1 core** for predictability
-*   **4 cores** for throughput
-*   Compare both
-
-***
+print(f"Average: {avg*1000:.2f}ms | p95: {p95*1000:.2f}ms | p99: {p99*1000:.2f}ms")
+```
 
 # 6. Part A — Profiling Your Pipelines
 
