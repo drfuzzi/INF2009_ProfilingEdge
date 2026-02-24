@@ -280,18 +280,13 @@ Shows where CPU time is spent (functions, call stacks).
 
 ### 6.5 `pidstat`
 
-This command monitors the real-time resource usage—including CPU, memory, and disk I/O—of your specific script by locating its Process ID (PID) and refreshing the statistics every second. It is particularly useful for observing the dynamic behavior of your code, such as whether memory usage creeps up during image processing or if disk access spikes when exporting header files.
+This command monitors the real-time resource usage—including CPU, memory, and disk I/O of your specific script by locating its Process ID (PID) and refreshing the statistics every second. It is particularly useful for observing the dynamic behavior of your code, such as whether memory usage creeps up during image processing or if disk access spikes when exporting header files.
 
 ```bash
 pidstat -rudw -p $(pgrep -f sample_img.py) 1
 ```
 
-Monitors:
-
-*   CPU%
-*   RSS memory
-*   I/O
-*   Context switches (voluntary/involuntary)
+**Note:** pidstat is a sampling tool that reports statistics at fixed intervals (e.g., every 1 second). If your script completes in less than the sampling interval, no meaningful per-process data will appear—this is expected behavior, not an error. For short workloads (<1s), use /usr/bin/time -v for total CPU time and peak RSS, perf stat for hardware counters, and cProfile for function-level breakdown. Use pidstat only for long-running or streaming pipelines, memory creep detection, or runtime jitter analysis, or artificially extend execution by looping the workload.
 
 ***
 
