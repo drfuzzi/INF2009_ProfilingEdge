@@ -62,7 +62,7 @@ Install required system-level packages:
 sudo apt update
 sudo apt install -y linux-perf time sysstat numactl util-linux \
                     linux-cpupower stress-ng python3-psutil \
-                    mosquitto mosquitto-clients
+                    mosquitto mosquitto-clients moreutils
 ```
 
 ***
