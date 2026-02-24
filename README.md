@@ -38,9 +38,7 @@ By the end of this lab, you will be able to:
     *   `chrt` (priority)
     *   cgroups (CPU quotas)
 
-4.  Implement a **simple EDF scheduler** (Earliest Deadline First).
-
-5.  Build a scheduling plan that meets task deadlines.
+4.  Implement a **simple scheduler**.
 
 ***
 
@@ -301,7 +299,7 @@ Monitors:
 
 # 7. Part B — Single Core vs Multi‑Core
 
-### 7.1 Pin to Single Core
+### 7.1 Pin to Single Core 0
 
 ```bash
 taskset -c 0 python sample_img.py
@@ -334,15 +332,9 @@ Use sample scripts or your own.
 mosquitto_sub -t "lab/e2e/processed" -v | ts '%s%N' >> mqtt_log.txt
 ```
 
-### Optional: Network Impairment
-
-```bash
-sudo tc qdisc add dev eth0 root netem delay 40ms loss 1%
-```
-
 ***
 
-# 9. Part D — Scheduling Plan & EDF
+# 9. Part D — Scheduling Plan
 
 You will:
 
@@ -350,25 +342,22 @@ You will:
 *   Decide deadlines
 *   Assign cores
 *   Limit CPU quotas if necessary
-*   Use EDF scheduler starter code (provided separately in lab)
 
 ### Example OS Controls
 
 #### Priority
+This command runs your script using the Round-Robin (RR) real-time scheduling policy with a priority level of 50, ensuring it always preempts standard background tasks. It forces the CPU to give your code a dedicated time slice, significantly reducing "jitter" and making your execution latency much more predictable for edge processing.
 
 ```bash
 sudo chrt --rr 50 python task.py
 ```
 
 #### Affinity
+This command restricts your script to a single, specific CPU core (Core 2), preventing the Linux scheduler from "bouncing" the process between different cores. By isolating the task this way, you minimize cache misses and scheduling overhead, which provides a more consistent and predictable baseline for measuring your audio processing latency.
 
 ```bash
 taskset -c 2 python sample_audio.py
 ```
-
-#### Cgroups (optional)
-
-Used to limit CPU shares of greedy tasks.
 
 ***
 
@@ -376,30 +365,23 @@ Used to limit CPU shares of greedy tasks.
 
 Submit:
 
-1.  **Profiling Cards** (one per task)
-2.  **CSV logs** from your profiling runs
-3.  Plots of:
-    *   latency distribution
-    *   CPU% vs time
-    *   1‑core vs multi‑core
-4.  MQTT end‑to‑end latency analysis
-5.  Your EDF scheduling plan
-6.  EDF run output showing deadline hits/misses
+1 Bottleneck Insight: Identify the top 3 functions in sample_img.py (via cProfile) and report the Instructions Per Cycle (IPC) from perf stat.
+2 Tail Latency: A table comparing Average vs. p99 latency to show how often your pipeline misses real-time deadlines.
+3 Optimization Impact: A comparison of FPS and RAM usage (RSS) between the standard (FP32) and quantized (Int8) versions of sample_dl.py.
+4 System Control:
+* The output of chrt -p proving your script ran with Real-Time Priority.
+* The recorded End-to-End latency increase when the 40ms network delay was active.
 
 ***
 
 # 11. Quick Command Cheatsheet
 
-```bash
-/usr/bin/time -v python app.py
-perf stat -e cycles,instructions,cache-misses --
-perf record -F 99 -g --
-perf report
-pidstat -rud -p $(pgrep -f app.py) 1
-taskset -c 0 python app.py
-taskset -c 0-3 python app.py
-mosquitto_sub -t lab/e2e/# -v | ts '%s%N'
-stress-ng --cpu 4 --timeout 20s
-```
+* Audio Capture: arecord -D hw:2,0 -d 5 -r 16000 -f S16_LE -c 2 test.wav
+* Real-Time Execution: sudo chrt --rr 50 taskset -c 2 python task.py
+* Hardware Counters: perf stat -e cycles,instructions,cache-misses,cs -- python app.py
+* Function Profiling: python -m cProfile -o output.prof app.py
+* Resource Monitoring: pidstat -rud -p $(pgrep -f app.py) 1
+* Network Stress: sudo tc qdisc add dev eth0 root netem delay 40ms loss 1%
+* MQTT Timing: mosquitto_sub -t "lab/e2e/processed" -v | ts '%s%N'
 
 ***
