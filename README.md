@@ -142,7 +142,7 @@ If PyTorch cannot be installed on your Pi, skip the DL task.
 Move into:
 
 ```bash
-cd ~/inf2009/profiling_package
+cd ~/inf2009/INF2009_ProfilingEdge/profiling_package/
 ```
 
 ### Image / Video
