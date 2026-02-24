@@ -282,6 +282,8 @@ Shows where CPU time is spent (functions, call stacks).
 
 ### 6.5 `pidstat`
 
+This command monitors the real-time resource usage—including CPU, memory, and disk I/O—of your specific script by locating its Process ID (PID) and refreshing the statistics every second. It is particularly useful for observing the dynamic behavior of your code, such as whether memory usage creeps up during image processing or if disk access spikes when exporting header files.
+
 ```bash
 pidstat -rud -p $(pgrep -f sample_img.py) 1
 ```
