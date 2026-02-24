@@ -4,71 +4,49 @@ import cv2
 import time
 import numpy as np
 
-def load_model(quantized=False):
+def load_optimized_model(quantize=True):
     """
-    Loads MobileNetV2. 
-    If quantized=True, it loads the pre-quantized version for Edge performance.
+    Represents Lab 2 & 3: Loading a model optimized for Edge devices.
     """
-    if quantized:
-        print("Loading Quantized MobileNetV2 (Int8)...")
-        # Load the quantized version from torchvision
+    if quantize:
+        # Quantized models use INT8 weights to save memory and speed up CPU cycles
+        print("Using Quantized MobileNetV2 (Int8) - Lab Optimization Active")
         model = models.quantization.mobilenet_v2(weights='DEFAULT', quantize=True)
     else:
-        print("Loading Standard MobileNetV2 (FP32)...")
+        print("Using Standard MobileNetV2 (FP32) - Baseline Model")
         model = models.mobilenet_v2(weights='DEFAULT')
     
     model.eval()
     return model
 
-def preprocess_frame(frame):
-    """
-    Resizes and normalizes the camera frame to 224x224 for MobileNetV2.
-    """
-    # Resize to model input size
-    input_img = cv2.resize(frame, (224, 224))
-    # Convert BGR to RGB and normalize to [0, 1]
-    input_img = cv2.cvtColor(input_img, cv2.COLOR_BGR2RGB) / 255.0
-    # Convert to Tensor and add batch dimension (1, 3, 224, 224)
-    input_tensor = torch.from_numpy(input_img).permute(2, 0, 1).float().unsqueeze(0)
-    return input_tensor
-
-def run_inference():
-    # SETTING: Change this to True to see the 'Quantization FPS Boost'
-    quantize = False 
+def run_dl_profiling():
+    # Toggle this to compare optimized vs unoptimized in your profiling report
+    USE_QUANTIZATION = True 
     
-    model = load_model(quantized=quantize)
-    cap = cv2.VideoCapture(0)
+    model = load_optimized_model(quantize=USE_QUANTIZATION)
     
-    print("Starting Real-time Inference. Press 'q' to quit.")
+    print("Generating synthetic workload for profiling...")
     
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret: break
-
-        start_time = time.time()
+    # 100-frame loop to gather stable hardware metrics
+    for i in range(100):
+        # Create synthetic 640x480 frame (no camera needed)
+        frame = np.random.randint(0, 256, (480, 640, 3), dtype=np.uint8)
         
-        # 1. Preprocess
-        input_tensor = preprocess_frame(frame)
+        start = time.perf_counter()
+
+        # Pre-processing: Resize to 224x224 (The size MobileNetV2 expects)
+        input_img = cv2.resize(frame, (224, 224))
+        input_tensor = torch.from_numpy(input_img).permute(2, 0, 1).float().unsqueeze(0) / 255.0
         
-        # 2. Inference
+        # Inference: The core workload for 'perf' and 'cProfile' to track
         with torch.no_grad():
             output = model(input_tensor)
+            
+        end = time.perf_counter()
+        fps = 1 / (end - start)
         
-        # 3. Calculate Performance
-        end_time = time.time()
-        fps = 1 / (end_time - start_time)
-        
-        # Display results on frame
-        cv2.putText(frame, f"FPS: {fps:.2f} (Quantized: {quantize})", (10, 30), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        
-        cv2.imshow('DL on Edge Profiling', frame)
-        
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-    cap.release()
-    cv2.destroyAllWindows()
+        if i % 20 == 0:
+            print(f"Frame {i} | Latency: {(end-start)*1000:.2f}ms | FPS: {fps:.2f}")
 
 if __name__ == "__main__":
-    run_inference()
+    run_dl_profiling()
